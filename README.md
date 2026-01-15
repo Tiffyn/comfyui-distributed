@@ -50,19 +50,69 @@ Set environment variables or create `.env` file (see `.env.example`):
 | `FRONTEND_HOST` | `127.0.0.1` | Frontend IP (for workers) |
 | `FRONTEND_PORT` | `8188` | Frontend port (for workers) |
 
-## API
+## Python Client
 
-Submit workflows to the frontend:
+### CLI Usage
 
 ```bash
+# Queue a workflow
+./client.py queue workflow.json
+
+# Queue with parameter overrides
+./client.py queue workflow.json -o 6.text "a cat in space" -o 3.seed 12345
+
+# Check queue status
+./client.py status
+
+# View history
+./client.py history
+./client.py history --id <prompt-id>
+
+# Cancel a job
+./client.py cancel <prompt-id>
+
+# Connect to remote frontend
+./client.py --host 192.168.1.100 queue workflow.json
+```
+
+### Library Usage
+
+```python
+from client import ComfyUIClient
+
+client = ComfyUIClient(host="192.168.1.100", port=8188)
+
+# Queue a workflow file
+result = client.queue_workflow_file("workflow.json")
+print(f"Queued: {result['prompt_id']}")
+
+# Queue with overrides
+result = client.queue_workflow_file("workflow.json", overrides={
+    "6": {"text": "a cat in space"},
+    "3": {"seed": 12345},
+})
+
+# Queue raw workflow dict
+result = client.queue_prompt(workflow_dict)
+
+# Check status
+queue = client.get_queue()
+history = client.get_history(prompt_id)
+```
+
+## Raw API
+
+```bash
+# Submit workflow
 curl -X POST http://<frontend>:8188/prompt \
   -H "Content-Type: application/json" \
   -d '{"prompt": <workflow-api-json>}'
-```
 
-Check queue status:
-```bash
+# Check queue
 curl http://<frontend>:8188/queue
+
+# Get history
+curl http://<frontend>:8188/history
 ```
 
 ## Requirements
