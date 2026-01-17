@@ -508,6 +508,7 @@ def get_pipeline(model: str = "flux2_dev"):
         pipe = ZImagePipeline.from_pretrained(
             "Tongyi-MAI/Z-Image-Turbo",
             torch_dtype=torch.bfloat16,
+            low_cpu_mem_usage=False,
         )
         pipe.to("cuda")
         print("Z-Image-Turbo loaded!")
@@ -569,14 +570,14 @@ def get_pipeline(model: str = "flux2_dev"):
         print("Qwen-Image-2512 loaded!")
 
     elif model == "flux2_klein":
-        from diffusers import FluxPipeline
+        from diffusers import Flux2KleinPipeline
 
         print("Loading FLUX.2-klein-9B...")
-        pipe = FluxPipeline.from_pretrained(
+        pipe = Flux2KleinPipeline.from_pretrained(
             "black-forest-labs/FLUX.2-klein-9B",
             torch_dtype=torch.bfloat16,
         )
-        pipe.enable_sequential_cpu_offload()
+        pipe.enable_model_cpu_offload()
         print("FLUX.2-klein-9B loaded!")
 
     else:
@@ -633,8 +634,8 @@ MODEL_SETTINGS = {
         "height": 1328,  # Native 2K resolution
     },
     "flux2_klein": {
-        "num_inference_steps": 28,
-        "guidance_scale": 3.5,
+        "num_inference_steps": 4,  # Step-distilled to 4 steps
+        "guidance_scale": 1.0,
     },
 }
 
