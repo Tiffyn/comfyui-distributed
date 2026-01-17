@@ -570,13 +570,14 @@ def get_pipeline(model: str = "flux2_dev"):
         print("Qwen-Image-2512 loaded!")
 
     elif model == "flux2_klein":
-        from diffusers import Flux2Pipeline
+        from diffusers import Flux2KleinPipeline
 
         print("Loading FLUX.2-klein-9B...")
-        pipe = Flux2Pipeline.from_pretrained(
+        pipe = Flux2KleinPipeline.from_pretrained(
             "black-forest-labs/FLUX.2-klein-9B",
             torch_dtype=torch.bfloat16,
-        ).to("cuda")
+        )
+        pipe.enable_model_cpu_offload()
         print("FLUX.2-klein-9B loaded!")
 
     else:
