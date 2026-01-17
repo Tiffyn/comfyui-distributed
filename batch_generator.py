@@ -576,8 +576,7 @@ def get_pipeline(model: str = "flux2_dev"):
         pipe = Flux2Pipeline.from_pretrained(
             "black-forest-labs/FLUX.2-klein-9B",
             torch_dtype=torch.bfloat16,
-        )
-        pipe.enable_model_cpu_offload()
+        ).to("cuda")
         print("FLUX.2-klein-9B loaded!")
 
     else:
